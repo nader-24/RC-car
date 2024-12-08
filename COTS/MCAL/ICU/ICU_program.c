@@ -1,15 +1,11 @@
-/*
- * ICU_program.c
- *
- *  Created on: 29 Nov 2024
- *      Author: nader
- */
-#include "STD_TYPES.h"
-#include "BIT_MATH.h"
+/*=============================================*/
+#include "../../LIB/STD_TYPES.h"
+#include "../../LIB/BIT_MATH.h"
+/*=============================================*/
 #include "ICU_interface.h"
 #include "ICU_config.h"
 #include "ICU_private.h"
-
+/*=============================================*/
 static void (*GlobalPtrFuncicu)(void)=NULL;
 
 void ICU_voidEnable(void)

@@ -8,7 +8,7 @@
  * FAST_PWM
  * PHASE_PWM
  * */
-#define TIMER_MODE  CTC_MODE
+#define TIMER_MODE  FAST_PWM
 
 
 /*
@@ -18,7 +18,7 @@
  * DIV_256
  * DIV_1024
  * */
-#define PRE_SCALLER  DIV_8
+#define PRE_SCALLER  DIV_1024
 
 
 #endif

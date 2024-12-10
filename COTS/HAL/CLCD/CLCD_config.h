@@ -20,13 +20,13 @@
  * */
 
 
-#define DATA_PORT PORT_u8C
+#define DATA_PORT PORT_u8A
 
-#define CTRL_PORT PORT_u8D
+#define CTRL_PORT PORT_u8C
 
-#define RS  PIN2
-#define RW  PIN1
-#define EN  PIN0
+#define RS  PIN7
+#define RW  PIN5
+#define EN  PIN6
 
 
 #endif

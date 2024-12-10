@@ -1,10 +1,11 @@
+/*===================================================*/
 #include "../../LIB/STD_TYPES.h"
 #include "../../LIB/BIT_MATH.h"
-//=================================================================================================================
+/*===================================================*/
 #include "UART_int.h"
 #include "UART_prv.h"
 #include "UART_cfg.h"
-//=================================================================================================================
+/*=====================================================*/
 static void (*UART_pvRXCIFunc)(void) = NULL;
 static void (*UART_pvTXCIFunc)(void) = NULL;
 static void (*UART_pvUDREIFunc)(void) = NULL;
@@ -147,6 +148,10 @@ u8 UART_u8ResciveData(void)
 {
     while(!GET_BIT(UART_u8_UCSRA_REG,UCSRA_RXC_BIT));
     return UART_u8_UDR_REG;
+}
+u8 UART_u8GetData(void)
+{
+	return UART_u8_UDR_REG;
 }
 
 /*------------------UART Enterrupts Functions------------------*/

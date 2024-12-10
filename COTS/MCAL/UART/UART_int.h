@@ -23,7 +23,7 @@ void UART_voidUDREInterrupt(Interrapt_Mode Copy_eMode);
 void UART_voidSendData(u8 Copy_u8Data);
 
 u8 UART_u8ResciveData(void);
-
+u8 UART_u8GetData(void);
 void UART_RXCSetCallBack(void (* Copy_pvRXCIFunc)(void));
 //==================================================================================================================
 #endif/*UART_INT_H*/

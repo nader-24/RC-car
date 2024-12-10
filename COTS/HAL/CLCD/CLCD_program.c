@@ -8,6 +8,7 @@
 #include "CLCD_interface.h"
 #include "CLCD_private.h"
 #include <util/delay.h>
+/*==============================================*/
 
 static void CLCD_voidSendData (u8 Copy_u8Data)
 {

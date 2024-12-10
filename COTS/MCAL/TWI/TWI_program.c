@@ -1,15 +1,11 @@
-/*
- * TWI_program.c
- *
- *  Created on: 2 Nov 2024
- *      Author: nader
- */
-
-#include "STD_TYPES.h"
-#include "BIT_MATH.h"
+/*=========================================*/
+#include "../../LIB/STD_TYPES.h"
+#include "../../LIB/BIT_MATH.h"
+/*=========================================*/
 #include "TWI_config.h"
 #include "TWI_interface.h"
 #include "TWI_private.h"
+/*=========================================*/
 
 void TWI_voidInitSlave(u8 Copy_u8SlaveAddress)
 {

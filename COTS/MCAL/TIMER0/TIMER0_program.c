@@ -5,7 +5,7 @@
 #include "TIMER0_config.h"
 #include "TIMER0_interface.h"
 #include "TIMER0_private.h"
-
+/*=======================================================*/
 
 static void (*GlobalPtrFuncNormal)(void)=NULL;
 static void (*GlobalPtrFuncCompare)(void)=NULL;

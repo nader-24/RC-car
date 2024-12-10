@@ -13,11 +13,7 @@
 #ifndef ULTA_H_
 #define ULTA_H_
 
-typedef enum{
-	LEFT = 2,
-	MID,
-	RIGHT
-}sonic_e;
+
 void ULTRA_Init(void);
 
 void ULTRA_measure(void);

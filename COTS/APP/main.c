@@ -26,17 +26,21 @@
 #include "../HAL/IR_SENSOR/IR_sensor_interface.h"
 /*=======================================*/
 /*====GLOBAL FLAGS====*/
-u8 bluetooth_flag=0;
+u8 bluetooth_flag=1;
 /*=======================================*/
 void switch_mode(void)
 {
 	if(bluetooth_flag==0)
 	{
 		bluetooth_flag=1;
+		IR_sensor_voidDisable();
+		ULTRA_Disable();
 	}
 	else
 	{
 		bluetooth_flag=0;
+		IR_sensor_voidInit();
+		ULTRA_Init();
 	}
 }
 
@@ -76,14 +80,14 @@ void motor_control(void)
 		case 'x':
 			bluetooth_flag=0;
 			DIO_voidSetPinValue(PORT_u8B, PIN0, PIN_LOW);
-			EXTI_voidEnableDisable(INT0, ENABLED);
+			IR_sensor_voidInit();
 			break;
 		}
 	}
 	else if(uart_flag=='X')
 	{
 		bluetooth_flag=1;
-		EXTI_voidEnableDisable(INT0, DISABLED);
+		IR_sensor_voidDisable();
 		DIO_voidSetPinValue(PORT_u8B, PIN0, PIN_HIGH);
 	}
 
@@ -123,54 +127,35 @@ void main (void)
 	DIO_voidSetPinDirection(PORT_u8C, PIN6, PIN_OUT);
 	DIO_voidSetPinDirection(PORT_u8C, PIN5, PIN_OUT);
 
-	/* OCR0 output  */
-	DIO_voidSetPinDirection(PORT_u8B, PIN3, PIN_OUT);
 
-	/* Ultrasonic trig pins out */
-	DIO_voidSetPinDirection(PORT_u8C, PIN4, PIN_OUT);
-	DIO_voidSetPinDirection(PORT_u8C, PIN3, PIN_OUT);
-	DIO_voidSetPinDirection(PORT_u8C, PIN2, PIN_OUT);
 
-	/*  motor portD
-	 * pin3 * pin4 * pin5 * pin7  */
-	DIO_voidSetPinDirection(PORT_u8D, PIN3, PIN_OUT);
-	DIO_voidSetPinDirection(PORT_u8D, PIN4, PIN_OUT);
-	DIO_voidSetPinDirection(PORT_u8D, PIN5, PIN_OUT);
-	DIO_voidSetPinDirection(PORT_u8D, PIN7, PIN_OUT);
 
 	/* EXINT2 Switch*/
 	DIO_voidSetPinDirection(PORT_u8B,PIN2,PIN_IN);
 	DIO_voidSetPinValue(PORT_u8B,PIN2,PIN_HIGH);
 	/*  peripherials enables */
 
-	/*ICU call_back*/
 
 
-	/* timer0 ovf callback */
+
 
 	CLCD_voidInit();
 	/*  peripherials enables */
-
-	ICU_voidEnable();
-	TIMER0_voidInit();
-	TIMER1_voidInit();
-	UART_voidRXCInterrupt(Enable);
 	ULTRA_Init();
+
+	UART_voidRXCInterrupt(Enable);
+
 	UART_voidSetBudRate(9600);
 	UART_voidUDREInterrupt(Enable);
 	UART_voidInit();
-	IR_sensor_voidInit();
+
 
 	UART_RXCSetCallBack(motor_control);
-	ICU_voidSetPrecaller(NO_PRE_SCALLER);
-	ICU_voidSetEdge(RISING);
-	FASTPWM_voidInvOrNoninv(NON_INV);
-	TIMER0_voidSetOcrTicks(200);
-
-
 	EXTI_voidEnableDisable(INT2,ENABLED);
 	EXTI_voidSetSenseCtrl(INT2,FALLING_EDGE);
 	EXTI_voidSetCallBack(INT2,&switch_mode);
+
+	MD_voidMotorsInit();
 
 	GI_voidEnable();
 	while(1)
@@ -180,6 +165,12 @@ void main (void)
 		CLCD_u8SendString("   ");
 		CLCD_voidSetPosition(0, 0);
 
+
+		/*stop if obstcale found*/
+		if(ULTRA_reading()<7)
+		{
+			MD_voidStop();
+		}
 
 	}
 

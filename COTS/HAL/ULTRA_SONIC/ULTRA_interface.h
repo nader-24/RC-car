@@ -15,7 +15,7 @@
 
 
 void ULTRA_Init(void);
-
+void ULTRA_Disable(void);
 void ULTRA_measure(void);
 
 u8 ULTRA_reading();

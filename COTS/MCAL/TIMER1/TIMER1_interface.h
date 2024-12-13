@@ -33,7 +33,7 @@ typedef enum
 void TIMER1_voidSetCallBackOVF(void (*pfunc)(void));
 void TIMER1_voidSetPreLoad(u16 Copy_u16PreLoad);
 
-
+void TIMER1_voidDisable();
 void TIMER1_voidInit(void);
 void TIMER1_voidSetCompareValue(u16 Copy_u16Value);
 void TIMER1_voidSetCompareValue_B(u16 Copy_u16Value);

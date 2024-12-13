@@ -21,6 +21,10 @@ void TIMER1_voidInit(void)
 /* prescaller -> handeled in ICU */
 
 }
+void TIMER1_voidDisable()
+{
+	CLR_BIT(TIMSK1,TIMSK1_TOIE1);
+}
 
 void TIMER1_voidSetCallBackOVF(void (*pfunc)(void))
 {

@@ -4,7 +4,7 @@
 
 void IR_sensor_voidInit();
 
-
+void IR_sensor_voidDisable();
 
 
 

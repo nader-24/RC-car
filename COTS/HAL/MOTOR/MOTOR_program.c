@@ -16,7 +16,8 @@ void MD_voidMotorsInit(void)
 	DIO_voidSetPinDirection(MD_DIRECTION_PORT,MOTOR1_BACKWARD_PIN,PIN_OUT);
 	DIO_voidSetPinDirection(MD_DIRECTION_PORT,MOTOR2_FORWARD_PIN,PIN_OUT);
 	DIO_voidSetPinDirection(MD_DIRECTION_PORT,MOTOR2_BACKWARD_PIN,PIN_OUT);
-	TIMER0_voidSetOcrTicks(0);
+	DIO_voidSetPinDirection(PORT_u8B, PIN3, PIN_OUT);/*ocr0 pin*/
+	TIMER0_voidSetOcrTicks(150);
 	FASTPWM_voidInvOrNoninv(NON_INV);
 	TIMER0_voidInit();
 

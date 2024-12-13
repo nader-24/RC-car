@@ -12,10 +12,6 @@
 /*=========================================*/
 
 /*==============================*/
-/* to know exact time */
-static u8 ovf_counter = 0;
-static u8 trig_flag=0;
-/* flag to switch edges */
 static u8 flag =0;
 static u8 distance = 0;
 
@@ -27,51 +23,44 @@ void ULTRA_measure(void)
 {
 	if(flag == 0)
 	{
-		/* reading ICR value */
 		ICR_reading_1= ICU_u16ICR();
-
-		/* changing edge */
 		ICU_voidSetEdge(FALLING);
-
-		/* clear ovf counter */
-		ovf_counter=0;
-
-		/* set flag to 1  */
-		flag =1;
+		flag++;
 	}
-	else if(flag==1)
+	else
 	{
 		ICR_reading_2 = ICU_u16ICR();
 		ICU_voidSetEdge(RISING);
+		distance= ((ICR_reading_2 -ICR_reading_1)*0.0043)/2;
 		flag = 0;
-		trig_flag=0;
-		/* calculate distance  */
-		distance= ((ICR_reading_2 + (65535UL*ovf_counter) -ICR_reading_1)*0.0043)/2;
+
 	}
 
 }
 
 void ovf_call()
 {
+	DIO_voidSetPinValue(PORT_u8C, PIN4,PIN_HIGH);
+	_delay_us(10);
+	DIO_voidSetPinValue(PORT_u8C, PIN4,PIN_LOW);
 
-	if(trig_flag==0)
-	{
-		DIO_voidSetPinValue(PORT_u8C, PIN3,PIN_HIGH);
-		_delay_us(10);
-		DIO_voidSetPinValue(PORT_u8C, PIN3,PIN_LOW);
-		trig_flag=1;
-	}
-	else if(trig_flag==1)
-	{
-		ovf_counter++;
-	}
+
 }
 void ULTRA_Init(void)
 {
+	DIO_voidSetPinDirection(PORT_u8C, PIN4, PIN_OUT);
 	TIMER1_voidSetCallBackOVF(&ovf_call);
 	ICU_voidSetCallBack(&ULTRA_measure);
+	ICU_voidSetPrecaller(NO_PRE_SCALLER);
+	ICU_voidSetEdge(RISING);
 	ICU_voidEnable();
+	TIMER1_voidInit();
 
+}
+void ULTRA_Disable(void)
+{
+	TIMER1_voidDisable();
+	ICU_voidDisable();
 }
 u8 ULTRA_reading(){
 

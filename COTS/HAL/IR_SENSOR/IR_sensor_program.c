@@ -20,9 +20,9 @@ void IR_CallBack(void)
 		EXTI_voidSetSenseCtrl(INT0, LOW_LEVEL);
 		IR_flag=1;
 		MD_voidMoveRight();
-		_delay_ms(500);
+		_delay_ms(2000);
 		MD_voidMoveLeft();
-		_delay_ms(1000);
+		_delay_ms(4000);
 	}
 	else
 	{
@@ -40,4 +40,8 @@ void IR_sensor_voidInit()
 	EXTI_voidSetCallBack(INT0, &IR_CallBack);
 }
 
+void IR_sensor_voidDisable()
+{
+	EXTI_voidEnableDisable(INT0, DISABLED);
 
+}

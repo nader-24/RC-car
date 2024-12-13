@@ -24,9 +24,14 @@
 #include "../HAL/ULTRA_SONIC/ULTRA_interface.h"
 #include "../HAL/MOTOR/MOTOR_interface.h"
 #include "../HAL/IR_SENSOR/IR_sensor_interface.h"
+#include "../HAL/EEPROM/EEPROM_interface.h"
 /*=======================================*/
 /*====GLOBAL FLAGS====*/
-u8 bluetooth_flag=1;
+u8 bluetooth_flag=0;
+u8 obstacle_counter=0;
+u8 obstacle_flag=0;
+
+u8 ultra_distance=255;
 /*=======================================*/
 void switch_mode(void)
 {
@@ -82,6 +87,12 @@ void motor_control(void)
 			DIO_voidSetPinValue(PORT_u8B, PIN0, PIN_LOW);
 			IR_sensor_voidInit();
 			break;
+		case 'V':
+			EEPROM_voidWriteByte(DEVICE1,250,0);
+			obstacle_counter=0;
+			CLCD_voidSetPosition(6, 1);
+			CLCD_voidSendNum(obstacle_counter);
+			break;
 		}
 	}
 	else if(uart_flag=='X')
@@ -103,7 +114,7 @@ void motor_control(void)
 
 void main (void)
 {
-	/* pins init  */
+	/* pins init */
 	/* bt led indication portb pin 0 */
 	DIO_voidSetPinDirection(PORT_u8B, PIN0, PIN_OUT);
 
@@ -137,8 +148,6 @@ void main (void)
 
 
 
-
-
 	CLCD_voidInit();
 	/*  peripherials enables */
 	ULTRA_Init();
@@ -149,29 +158,41 @@ void main (void)
 	UART_voidUDREInterrupt(Enable);
 	UART_voidInit();
 
-
+	TWI_voidInitMaster(0);
+	obstacle_counter=EEPROM_u8ReadByte(DEVICE1,250);
 	UART_RXCSetCallBack(motor_control);
 	EXTI_voidEnableDisable(INT2,ENABLED);
 	EXTI_voidSetSenseCtrl(INT2,FALLING_EDGE);
 	EXTI_voidSetCallBack(INT2,&switch_mode);
+
+	/* writing obstacle to lcd*/
+	CLCD_u8SendString("Obstacle ");
+	CLCD_voidSetPosition(6, 1);
+	CLCD_voidSendNum(obstacle_counter);
 
 	MD_voidMotorsInit();
 
 	GI_voidEnable();
 	while(1)
 	{
-		CLCD_voidSendNum(ULTRA_reading());
-		CLCD_voidSetPosition(0, 0);
-		CLCD_u8SendString("   ");
-		CLCD_voidSetPosition(0, 0);
-
-
-		/*stop if obstcale found*/
-		if(ULTRA_reading()<7)
+		ultra_distance=ULTRA_reading();
+		if(ultra_distance<7 && bluetooth_flag==0)
 		{
-			MD_voidStop();
+			if(obstacle_flag==0)
+			{
+				/*stop if obstacle found*/
+				MD_voidStop();
+				obstacle_counter++;
+				EEPROM_voidWriteByte(DEVICE1,250,obstacle_counter);
+				obstacle_flag=1;
+				CLCD_voidSetPosition(6, 1);
+				CLCD_voidSendNum(obstacle_counter);
+			}
 		}
-
+		else if(ultra_distance>12)
+		{
+			obstacle_flag=0;
+		}
 	}
 
 }

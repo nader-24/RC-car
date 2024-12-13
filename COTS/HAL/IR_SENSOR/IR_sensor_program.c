@@ -12,7 +12,7 @@
 /*===========================================*/
 #include <util/delay.h>
 /*===========================================*/
-u8 IR_flag=0;
+static u8 IR_flag=0;
 void IR_CallBack(void)
 {
 	if(IR_flag==0)
@@ -20,9 +20,9 @@ void IR_CallBack(void)
 		EXTI_voidSetSenseCtrl(INT0, LOW_LEVEL);
 		IR_flag=1;
 		MD_voidMoveRight();
-		_delay_ms(2000);
+		//_delay_ms(2000);
 		MD_voidMoveLeft();
-		_delay_ms(4000);
+		//_delay_ms(4000);
 	}
 	else
 	{

@@ -27,7 +27,7 @@
 #include "../HAL/EEPROM/EEPROM_interface.h"
 /*=======================================*/
 /*====GLOBAL FLAGS====*/
-u8 bluetooth_flag=0;
+u8 bluetooth_flag=1;
 u8 obstacle_counter=0;
 u8 obstacle_flag=0;
 
@@ -107,12 +107,9 @@ void motor_control(void)
 
 
 /*===========================*/
-
+/* system init function */
 /*=============================*/
-
-
-
-void main (void)
+void system_init(void)
 {
 	/* pins init */
 	/* bt led indication portb pin 0 */
@@ -173,27 +170,46 @@ void main (void)
 	MD_voidMotorsInit();
 
 	GI_voidEnable();
-	while(1)
+}
+
+
+void main (void)
+{
+	system_init();
+	while (1)
 	{
-		ultra_distance=ULTRA_reading();
-		if(ultra_distance<7 && bluetooth_flag==0)
-		{
-			if(obstacle_flag==0)
-			{
-				/*stop if obstacle found*/
-				MD_voidStop();
-				obstacle_counter++;
-				EEPROM_voidWriteByte(DEVICE1,250,obstacle_counter);
-				obstacle_flag=1;
-				CLCD_voidSetPosition(6, 1);
-				CLCD_voidSendNum(obstacle_counter);
-			}
-		}
-		else if(ultra_distance>12)
-		{
-			obstacle_flag=0;
-		}
+	    // Read distance from ultrasonic sensor
+	    u8 ultra_distance = ULTRA_reading();
+
+	    // Check if an obstacle is detected and Bluetooth flag is inactive
+	    if (ultra_distance < 7 && bluetooth_flag == 0)
+	    {
+	        if (obstacle_flag == 0)
+	        {
+	            // Stop the motor as an obstacle is detected
+	            MD_voidStop();
+
+	            // Increment the obstacle counter
+	            obstacle_counter++;
+
+	            // Save the updated counter value to EEPROM
+	            EEPROM_voidWriteByte(DEVICE1, 250, obstacle_counter);
+
+	            // Set the obstacle flag to prevent repeated actions
+	            obstacle_flag = 1;
+
+	            // Update the obstacle counter on the LCD display
+	            CLCD_voidSetPosition(6, 1);
+	            CLCD_voidSendNum(obstacle_counter);
+	        }
+	    }
+	    else if (ultra_distance > 12)
+	    {
+	        // Reset the obstacle flag when the path is clear
+	        obstacle_flag = 0;
+	    }
 	}
+
 
 }
 

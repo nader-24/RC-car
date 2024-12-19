@@ -13,20 +13,22 @@
 #include <util/delay.h>
 /*===========================================*/
 static u8 IR_flag=0;
+
 void IR_CallBack(void)
 {
 	if(IR_flag==0)
 	{
-		EXTI_voidSetSenseCtrl(INT0, LOW_LEVEL);
 		IR_flag=1;
+		EXTI_voidSetSenseCtrl(INT0, RISING_EDGE);
 		MD_voidMoveRight();
-		_delay_ms(2000);
+		_delay_ms(1000);
 		MD_voidMoveLeft();
-		_delay_ms(4000);
+		_delay_ms(2000);
+		MD_voidStop();
 	}
 	else
 	{
-		EXTI_voidSetSenseCtrl(INT0, RISING_EDGE);;
+		EXTI_voidSetSenseCtrl(INT0, FALLING_EDGE);;
 		IR_flag=0;
 		MD_voidMoveForward();
 	}
@@ -36,7 +38,7 @@ void IR_CallBack(void)
 void IR_sensor_voidInit()
 {
 	EXTI_voidEnableDisable(INT0, ENABLED);
-	EXTI_voidSetSenseCtrl(INT0,RISING_EDGE);
+	EXTI_voidSetSenseCtrl(INT0,FALLING_EDGE);
 	EXTI_voidSetCallBack(INT0, &IR_CallBack);
 }
 

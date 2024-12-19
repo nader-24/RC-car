@@ -5,12 +5,12 @@
  *      Author: nader
  */
 
-/*==================================*/
+//==================================/
 #include <util/delay.h>
-/*=======================================*/
+//=======================================/
 #include "../LIB/STD_TYPES.h"
 #include "../LIB/BIT_MATH.h"
-/*=======================================*/
+//=======================================/
 #include "../MCAL/DIO/DIO_interface.h"
 #include "../MCAL/GI/GI_interface.h"
 #include "../MCAL/ICU/ICU_interface.h"
@@ -19,20 +19,20 @@
 #include "../MCAL/UART/UART_int.h"
 #include "../MCAL/TWI/TWI_interface.h"
 #include "../MCAL/EXTI/EXTI_interface.h"
-/*=======================================*/
+//=======================================/
 #include "../HAL/CLCD/CLCD_interface.h"
 #include "../HAL/ULTRA_SONIC/ULTRA_interface.h"
 #include "../HAL/MOTOR/MOTOR_interface.h"
 #include "../HAL/IR_SENSOR/IR_sensor_interface.h"
 #include "../HAL/EEPROM/EEPROM_interface.h"
-/*=======================================*/
-/*====GLOBAL FLAGS====*/
+//=======================================/
+//====GLOBAL FLAGS====/
 u8 bluetooth_flag=1;
 u8 obstacle_counter=0;
 u8 obstacle_flag=0;
 
 u8 ultra_distance=255;
-/*=======================================*/
+//=======================================/
 void switch_mode(void)
 {
 	if(bluetooth_flag==0)
@@ -49,10 +49,10 @@ void switch_mode(void)
 	}
 }
 
-/*=======================================*/
+//=======================================/
 
 
-/*====================*/
+//====================/
 void motor_control(void)
 {
 	u8 uart_flag = UART_u8GetData();
@@ -70,10 +70,10 @@ void motor_control(void)
 		case 'F':
 			MD_voidMoveForward();
 			break;
-		case 'L':
+		case 'R':
 			MD_voidMoveLeft();
 			break;
-		case 'R':
+		case 'L':
 			MD_voidMoveRight();
 			break;
 		case 'B':
@@ -106,9 +106,9 @@ void motor_control(void)
 }
 
 
-/*===========================*/
+//===========================/
 /* system init function */
-/*=============================*/
+//=============================/
 void system_init(void)
 {
 	/* pins init */
@@ -119,7 +119,7 @@ void system_init(void)
 	DIO_voidSetPinDirection(PORT_u8D, PIN0, PIN_IN);
 	DIO_voidSetPinDirection(PORT_u8D, PIN1, PIN_OUT);
 
-	/*IR pin in0 portd pin2*/
+	//IR pin in0 portd pin2/
 	DIO_voidSetPinDirection(PORT_u8D, PIN2, PIN_IN);
 
 	/* I2c BUS pins scl output  */
@@ -186,9 +186,10 @@ void main (void)
 	    {
 	        if (obstacle_flag == 0)
 	        {
-	            // Stop the motor as an obstacle is detected
-	            MD_voidStop();
-
+	        	// MOVE LEFT if an obstacle is detected
+	        	MD_voidMoveLeft();
+	        	while(ULTRA_reading()<10);
+	        	MD_voidMoveForward();
 	            // Increment the obstacle counter
 	            obstacle_counter++;
 
@@ -212,17 +213,3 @@ void main (void)
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
